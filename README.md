@@ -1,4 +1,4 @@
-# socialapp-frontend
+# socialapp-backend
 
 Whole application is in development, more sophisticated readme will be provided sooner or later.
 
