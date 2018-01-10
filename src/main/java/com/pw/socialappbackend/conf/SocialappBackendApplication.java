@@ -17,4 +17,9 @@ public class SocialappBackendApplication {
 	public Filter corsFilter() {
 		return new CustomCorsFilter();
 	}
+
+	@Bean
+	public Filter authFilter() {
+		return new AuthenticationFilter();
+	}
 }

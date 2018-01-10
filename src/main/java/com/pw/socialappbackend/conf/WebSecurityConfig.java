@@ -13,11 +13,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
     @Autowired
     private Filter corsFilter;
 
+    @Autowired
+    private Filter authFilter;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http
                 .addFilter(corsFilter)
+                .addFilterAfter(authFilter, CustomCorsFilter.class)
                 .authorizeRequests().anyRequest().permitAll()
                 .and()
                 .csrf().disable();
