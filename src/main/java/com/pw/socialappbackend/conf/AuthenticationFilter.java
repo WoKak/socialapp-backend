@@ -27,7 +27,7 @@ public class AuthenticationFilter implements Filter {
 
         if(request.getHeader("Token").isEmpty()) {
 
-            if(!"/auth/get-token".equals(request.getPathInfo())) {
+            if("/auth/get-token".equals(request.getPathInfo())) { //left as reminder: should not be '!' here
                 chain.doFilter(req, res);
             } else {
                 ((HttpServletResponse) res).setStatus(401);
