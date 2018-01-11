@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class AuthenticationFilter implements Filter {
 
-    private final Logger logger = LoggerFactory.getLogger(CustomCorsFilter.class);
+    private final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
 
 
     @Override
@@ -21,9 +21,6 @@ public class AuthenticationFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-
-        logger.debug("Hello!");
-        logger.info("Hello!");
 
         if(request.getHeader("Token").isEmpty()) {
 
