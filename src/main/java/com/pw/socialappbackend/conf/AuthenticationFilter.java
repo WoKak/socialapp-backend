@@ -22,9 +22,11 @@ public class AuthenticationFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
+        String tmp = request.getRequestURI();
+
         if(request.getHeader("Token").isEmpty()) {
 
-            if(!"/auth/get-token".equals(request.getPathInfo())) { //left as reminder: should not be '!' here
+            if("/auth/get-token".equals(request.getRequestURI())) { //left as reminder: should not be '!' here
                 chain.doFilter(req, res);
             } else {
                 ((HttpServletResponse) res).setStatus(401);
