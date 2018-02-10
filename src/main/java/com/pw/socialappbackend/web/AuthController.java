@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Random;
@@ -19,12 +19,13 @@ import java.util.Random;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @GET
-    @RequestMapping("/get-token")
+    @POST
+    @RequestMapping("/login")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getToken(@RequestBody User userToAuthenticate) {
+    public Response login(@RequestBody User userToAuthenticate) {
 
         //Authorization
+        //TODO: call service for authenticate
         if(!"user".equals(userToAuthenticate.getUsername()) || !"pass".equals(userToAuthenticate.getPassword())) {
             return Response.status(401)
                     .header("Access-Control-Allow-Origin", "*")
@@ -33,6 +34,7 @@ public class AuthController {
                     .build();
         }
 
+        //TODO: refactor should not be in controller, should be in service
         Random random = new Random();
         HashFunction hf = Hashing.sha512();
         HashCode hc = hf.newHasher().putString(String.valueOf(random.nextLong()), Charsets.UTF_8).hash();
@@ -42,11 +44,23 @@ public class AuthController {
         authenticatedUser.setUsername(userToAuthenticate.getUsername());
         authenticatedUser.setToken(token);
 
+        //end of code to refactor
+
         return Response.status(200)
                 .entity(authenticatedUser)
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                .header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type")
                 .build();
+    }
+
+    @POST
+    @RequestMapping("/logout")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response logout(@RequestBody User userToLogout) {
+
+        //TODO: call service in order to invalid users token
+
+        return Response.status(200)
+                .entity(new User(userToLogout.getUsername()))
+                .build();
+
     }
 }
