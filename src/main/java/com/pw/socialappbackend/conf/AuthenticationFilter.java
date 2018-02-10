@@ -26,13 +26,13 @@ public class AuthenticationFilter implements Filter {
 
         if(request.getHeader("Token").isEmpty()) {
 
-            if("/auth/get-token".equals(request.getRequestURI())) { //left as reminder: should not be '!' here
+            if("/auth/get-token".equals(request.getRequestURI())) {
                 chain.doFilter(req, res);
             } else {
                 ((HttpServletResponse) res).setStatus(401);
             }
         } else {
-            //here should be some logic which checks this token
+            //here should be some logic which checks this token - and token needs to be connected with user on db level
             chain.doFilter(req, res);
         }
     }
