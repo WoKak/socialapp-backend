@@ -6,4 +6,4 @@ Whole application is in development, more sophisticated readme will be provided 
 
 * Clone code
 * Install maven
-* mvn spring-boot:run
+* ```mvn spring-boot:run```
