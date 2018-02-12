@@ -5,6 +5,8 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.pw.socialappbackend.model.User;
+import com.pw.socialappbackend.service.AuthenticationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,15 +20,23 @@ import java.util.Random;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    public AuthController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     @POST
     @RequestMapping("/login")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response login(@RequestBody User userToAuthenticate) {
 
+
+
         //Authorization
         //TODO: call service for authenticate
-        if(!"user".equals(userToAuthenticate.getUsername()) || !"pass".equals(userToAuthenticate.getPassword())) {
+        if(authenticationService.authenticateUser(userToAuthenticate.getUsername(),userToAuthenticate.getPassword())) {
             return Response.status(401)
                     .header("Access-Control-Allow-Origin", "*")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
@@ -34,15 +44,10 @@ public class AuthController {
                     .build();
         }
 
-        //TODO: refactor should not be in controller, should be in service
-        Random random = new Random();
-        HashFunction hf = Hashing.sha512();
-        HashCode hc = hf.newHasher().putString(String.valueOf(random.nextLong()), Charsets.UTF_8).hash();
-        String token = hc.toString();
 
         User authenticatedUser = new User();
         authenticatedUser.setUsername(userToAuthenticate.getUsername());
-        authenticatedUser.setToken(token);
+        authenticatedUser.setToken(authenticationService.generateToken());
 
         //end of code to refactor
 

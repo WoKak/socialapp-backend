@@ -6,7 +6,7 @@
 	<groupId>com.pw</groupId>
 	<artifactId>socialapp-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>socialapp-backend</name>
 	<description>Socialmedia twitter-like application</description>
