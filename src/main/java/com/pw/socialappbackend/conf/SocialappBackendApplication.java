@@ -1,5 +1,7 @@
 package com.pw.socialappbackend.conf;
 
+import com.pw.socialappbackend.service.TweetService;
+import com.pw.socialappbackend.service.impl.TweetServiceImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -21,5 +23,11 @@ public class SocialappBackendApplication {
 	@Bean
 	public Filter authFilter() {
 		return new AuthenticationFilter();
+	}
+
+
+	@Bean
+	public TweetService tweetService() {
+		return new TweetServiceImpl();
 	}
 }
