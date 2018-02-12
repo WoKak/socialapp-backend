@@ -63,4 +63,15 @@ public class AuthController {
                 .build();
 
     }
+
+    @POST
+    @RequestMapping("/register")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response register(@RequestBody User userToRegister) {
+
+        //TODO: calling service in order to register user
+
+        return Response.status(200)
+                .build();
+    }
 }
