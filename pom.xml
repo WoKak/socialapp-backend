@@ -53,7 +53,11 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>4.2.2.RELEASE</version>
+		</dependency>
 		<!-- Non-standard dependencies -->
 
 		<dependency>
