@@ -1,5 +1,7 @@
 package com.pw.socialappbackend.conf;
 
+import com.pw.socialappbackend.service.AuthenticationService;
+import com.pw.socialappbackend.service.impl.AuthenticationServiceImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -21,5 +23,10 @@ public class SocialappBackendApplication {
 	@Bean
 	public Filter authFilter() {
 		return new AuthenticationFilter();
+	}
+
+	@Bean
+	public AuthenticationService authenticationService() {
+		return new AuthenticationServiceImpl();
 	}
 }

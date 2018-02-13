@@ -8,7 +8,6 @@ import com.pw.socialappbackend.model.User;
 import com.pw.socialappbackend.service.AuthenticationService;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.core.Response;
 import java.util.Random;
 
 //TODO: write implementation
@@ -17,29 +16,37 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public boolean isTokenInRequestIsValidForUser(String token, String user) {
+
         return false;
     }
 
     @Override
-    public boolean authenticateUser(String username, String password) {
-        if(!"user".equals(username) || !"pass".equals(password)) {
+    public boolean authenticateUser(User user) {
+
+        if("user".equals(user.getUsername()) && "pass".equals(user.getPassword())) {
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     @Override
-    public User prepareResponse() {
-        return null;
+    public User prepareResponse(String username) {
+
+        User authenticatedUser = new User();
+        authenticatedUser.setUsername(username);
+        authenticatedUser.setToken(generateToken());
+
+        return authenticatedUser;
     }
 
     @Override
     public String generateToken() {
+
         Random random = new Random();
         HashFunction hf = Hashing.sha512();
         HashCode hc = hf.newHasher().putString(String.valueOf(random.nextLong()), Charsets.UTF_8).hash();
-        String token = hc.toString();
-        return token;
+        return hc.toString();
     }
 
     @Override
