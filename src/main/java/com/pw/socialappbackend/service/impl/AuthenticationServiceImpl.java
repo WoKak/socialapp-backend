@@ -16,13 +16,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public boolean isTokenInRequestIsValidForUser(String token, String user) {
-
         return false;
     }
 
     @Override
     public boolean authenticateUser(User user) {
-        return false;
+        return true;
     }
 
     @Override
