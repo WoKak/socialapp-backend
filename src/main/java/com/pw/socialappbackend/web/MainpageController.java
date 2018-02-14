@@ -12,8 +12,12 @@ import javax.ws.rs.core.Response;
 @RequestMapping("/main")
 public class MainpageController {
 
-    @Autowired
     private TweetService tweetService;
+
+    @Autowired
+    public MainpageController(TweetService tweetService) {
+        this.tweetService = tweetService;
+    }
 
     @GET
     @RequestMapping("/fetch-tweets")
