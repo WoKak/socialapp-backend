@@ -27,7 +27,7 @@ public class AuthController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response login(@RequestBody User userToAuthenticate) {
 
-        if(authenticationService.authenticateUser(userToAuthenticate)) {
+        if(!authenticationService.authenticateUser(userToAuthenticate)) {
             return Response.status(401)
                     .build();
         }
