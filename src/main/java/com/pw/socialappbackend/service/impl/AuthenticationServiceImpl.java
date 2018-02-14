@@ -6,9 +6,6 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.pw.socialappbackend.model.User;
 import com.pw.socialappbackend.service.AuthenticationService;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;

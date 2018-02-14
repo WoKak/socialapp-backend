@@ -1,6 +1,8 @@
 package com.pw.socialappbackend.dao;
 
 import com.pw.socialappbackend.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -14,6 +16,9 @@ import java.sql.SQLException;
  * Created by Piotr on 2018-02-13.
  */
 public class UserDao {
+
+    private final Logger logger = LoggerFactory.getLogger(UserDao.class);
+
     private DataSource dataSource;
     private PasswordEncoder passwordEncoder;
 
@@ -23,26 +28,30 @@ public class UserDao {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public boolean validateUserPassword(User user) throws SQLException {
-        String hashedPasswordFromDb;
+    public boolean validateUserPassword(User user) {
 
-        Connection connection = dataSource.getConnection();
-        String getUserHashedPassword = "SELECT password FROM users WHERE username=?";
-        PreparedStatement preparedStatement = connection.prepareStatement(getUserHashedPassword);
-        preparedStatement.setString(1, user.getUsername());
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            hashedPasswordFromDb = resultSet.getString("password");
-        } else {
-            return false;
-        }
-        String hashUserPassword = passwordEncoder.encode(user.getPassword());
+        String hashedPasswordFromDb = "";
 
-        if (hashUserPassword.equals(hashedPasswordFromDb)) {
-            return true;
-        }else{
-            return false;
+        try {
+
+            Connection connection = dataSource.getConnection();
+            String getUserHashedPassword = "SELECT password FROM users WHERE username=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(getUserHashedPassword);
+            preparedStatement.setString(1, user.getUsername());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                hashedPasswordFromDb = resultSet.getString("password");
+            } else {
+                return false;
+            }
+        } catch (SQLException ex) {
+            logger.info("SQLException during validateUserPassword");
+            logger.info(ex.getMessage());
         }
+
+        String hashedUserPassword = passwordEncoder.encode(user.getPassword());
+
+        return hashedUserPassword.equals(hashedPasswordFromDb);
     }
     public void insertUserIntoDb(User user){
         //TODO Add user to Db

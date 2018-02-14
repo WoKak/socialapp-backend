@@ -6,13 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.servlet.Filter;
 import javax.sql.DataSource;
 
 @SpringBootApplication(scanBasePackages = "com.pw.socialappbackend.web")
+@PropertySource(value = {"classpath:db.properties"})
 public class SocialappBackendApplication {
 
 	@Autowired
@@ -49,4 +53,8 @@ public class SocialappBackendApplication {
 		return dataSource;
 	}
 
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder(15);
+	}
 }
