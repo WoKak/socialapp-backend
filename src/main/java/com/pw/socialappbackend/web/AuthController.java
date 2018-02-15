@@ -55,7 +55,11 @@ public class AuthController {
     public Response register(@RequestBody User userToRegister) {
 
         //TODO: calling service in order to register user
-
+        if (authenticationService.checkIfUserExists(userToRegister)){
+            return Response.status(500)
+                    .entity("User exist")
+                    .build();
+        }
         return Response.status(200)
                 .build();
     }

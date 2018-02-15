@@ -1,5 +1,6 @@
 package com.pw.socialappbackend.conf;
 
+import com.pw.socialappbackend.dao.UserDao;
 import com.pw.socialappbackend.service.AuthenticationService;
 import com.pw.socialappbackend.service.impl.AuthenticationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class SocialappBackendApplication {
 
 	@Bean
 	public AuthenticationService authenticationService() {
-		return new AuthenticationServiceImpl();
+		return new AuthenticationServiceImpl(userDao());
 	}
 
 	@Bean
@@ -64,5 +65,10 @@ public class SocialappBackendApplication {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder(15);
+	}
+
+	@Bean
+	public UserDao userDao(){
+		return new UserDao(dataSource(),passwordEncoder());
 	}
 }

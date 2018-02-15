@@ -4,8 +4,10 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+import com.pw.socialappbackend.dao.UserDao;
 import com.pw.socialappbackend.model.User;
 import com.pw.socialappbackend.service.AuthenticationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
@@ -14,6 +16,13 @@ import java.util.Random;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
+    private UserDao userDao;
+
+    @Autowired
+    public AuthenticationServiceImpl (UserDao userDao){
+        this.userDao=userDao;
+    }
+
     @Override
     public boolean isTokenInRequestIsValidForUser(String token, String user) {
         return false;
@@ -21,7 +30,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public boolean authenticateUser(User user) {
-        return true;
+
+        return userDao.validateUserPassword(user);
     }
 
     @Override
@@ -50,6 +60,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void registerUser(User userToRegister) {
+        userDao.insertUserIntoDb(userToRegister);
+    }
 
+    @Override
+    public boolean checkIfUserExists(User user) {
+        return userDao.checkIfUserNameInDb(user.getUsername());
     }
 }

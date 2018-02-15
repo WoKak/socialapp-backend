@@ -10,4 +10,5 @@ public interface AuthenticationService {
     String generateToken();
     void invalidateToken(String token);
     void registerUser(User userToRegister);
+    boolean checkIfUserExists(User user);
 }
