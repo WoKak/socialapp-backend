@@ -30,7 +30,7 @@ public class ProfileController {
     @RequestMapping("/fetch-users-tweets/{user}")
     public Response fetchUsersTweets(@PathVariable("user") String user) {
 
-        return Response.status(200)
+        return Response.status(Response.Status.OK)
                 .entity(tweetService.fetchUsersTweets(user))
                 .build();
     }
@@ -42,7 +42,7 @@ public class ProfileController {
 
         tweetService.addTweet(tweet);
 
-        return Response.status(200)
+        return Response.status(Response.Status.OK)
                 .entity(tweet)
                 .build();
     }

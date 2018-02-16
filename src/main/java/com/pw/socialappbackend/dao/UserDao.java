@@ -45,7 +45,7 @@ public class UserDao {
                 return false;
             }
         } catch (SQLException ex) {
-            logger.info("SQLException during validateUserPassword");
+            logger.info("SQLException during validating user password");
             logger.info(ex.getMessage());
         }
 
@@ -55,34 +55,27 @@ public class UserDao {
     }
 
     public void insertUserIntoDb(User user) {
-        //TODO Add user to Db
+
         try {
             Connection connection = dataSource.getConnection();
 
             String insertUserToDb = "INSERT INTO users(username, password) VALUES (?, ?)";
-            String insertUserRoleToDb = "INSERT INTO users_roles(username, role) VALUES (?, 'ROLE_USER')";
 
-            //For User
             String hash = passwordEncoder.encode(user.getPassword());
             PreparedStatement preparedStatement = connection.prepareStatement(insertUserToDb);
             preparedStatement.setString(1, user.getUsername());
             preparedStatement.setString(2, hash);
             preparedStatement.executeUpdate();
-            logger.debug(preparedStatement.toString());
-            //For User role
-            PreparedStatement preparedStatementForRole = connection.prepareStatement(insertUserRoleToDb);
-            preparedStatement.setString(1, user.getUsername());
-            logger.debug(preparedStatement.toString());
-            preparedStatementForRole.executeUpdate();
-
+            logger.info(preparedStatement.toString());
 
         } catch (SQLException e) {
-            logger.info("SQLExecption during insert user into Db");
+            logger.info("SQLExecption during inserting user into DB");
             logger.info(e.getMessage());
         }
     }
 
     public boolean checkIfUserNameInDb(String userName) {
+
         try {
             Connection connection = dataSource.getConnection();
             String query = "SELECT * FROM users WHERE username=?";
@@ -91,16 +84,12 @@ public class UserDao {
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) {
-                return false;
-            } else {
-                return true;
-            }
+            return resultSet.next();
+
         } catch (SQLException e) {
-            logger.info("SQLExecption during validation if user exists in Db");
+            logger.info("SQLExecption during validation if user exists in DB");
             logger.info(e.getMessage());
         }
-
 
         return false;
     }

@@ -27,12 +27,14 @@ public class AuthController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response login(@RequestBody User userToAuthenticate) {
 
-        if(!authenticationService.authenticateUser(userToAuthenticate)) {
-            return Response.status(401)
+        boolean isUserAuthenticated = authenticationService.authenticateUser(userToAuthenticate);
+
+        if(!isUserAuthenticated) {
+            return Response.status(Response.Status.UNAUTHORIZED)
                     .build();
         }
 
-        return Response.status(200)
+        return Response.status(Response.Status.OK)
                 .entity(authenticationService.prepareResponse(userToAuthenticate.getUsername()))
                 .build();
     }
@@ -44,7 +46,7 @@ public class AuthController {
 
         //TODO: call service in order to invalidate user's token
 
-        return Response.status(200)
+        return Response.status(Response.Status.OK)
                 .entity(new User(userToLogout.getUsername()))
                 .build();
     }
@@ -54,13 +56,16 @@ public class AuthController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response register(@RequestBody User userToRegister) {
 
-        //TODO: calling service in order to register user
         if (authenticationService.checkIfUserExists(userToRegister)){
-            return Response.status(500)
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("User exist")
                     .build();
         }
-        return Response.status(200)
+
+        authenticationService.registerUser(userToRegister);
+
+        return Response.status(Response.Status.OK)
+                .entity(userToRegister.getUsername())
                 .build();
     }
 }

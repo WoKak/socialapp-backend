@@ -1,5 +1,9 @@
 package com.pw.socialappbackend.conf;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import com.pw.socialappbackend.dao.UserDao;
 import com.pw.socialappbackend.service.AuthenticationService;
 import com.pw.socialappbackend.service.impl.AuthenticationServiceImpl;
@@ -64,7 +68,19 @@ public class SocialappBackendApplication {
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder(15);
+		return new PasswordEncoder() {
+			@Override
+			public String encode(CharSequence charSequence) {
+				HashFunction hf = Hashing.sha512();
+				HashCode hc = hf.newHasher().putString(charSequence, Charsets.UTF_8).hash();
+				return hc.toString();
+			}
+
+			@Override
+			public boolean matches(CharSequence charSequence, String s) {
+				return String.valueOf(charSequence).equals(s);
+			}
+		};
 	}
 
 	@Bean

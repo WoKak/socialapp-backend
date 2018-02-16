@@ -23,7 +23,7 @@ public class MainpageController {
     @RequestMapping("/fetch-tweets")
     public Response fetchTweets() {
 
-        return Response.status(200)
+        return Response.status(Response.Status.OK)
                 .entity(tweetService.fetchTweets())
                 .build();
     }

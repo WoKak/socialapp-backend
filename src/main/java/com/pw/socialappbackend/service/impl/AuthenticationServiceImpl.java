@@ -20,7 +20,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Autowired
     public AuthenticationServiceImpl (UserDao userDao){
-        this.userDao=userDao;
+        this.userDao = userDao;
     }
 
     @Override
