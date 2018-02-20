@@ -93,5 +93,56 @@ public class UserDao {
 
         return false;
     }
+    public void addTokenToDB(String token,String username){
+        try {
+            Connection connection=dataSource.getConnection();
 
+            String insertTokenToDb = "UPDATE users SET token=? WHERE username=?";
+
+            PreparedStatement preparedStatement=connection.prepareStatement(insertTokenToDb);
+            preparedStatement.setString(1,token);
+            preparedStatement.setString(2,username);
+            preparedStatement.executeUpdate();
+
+            logger.info(preparedStatement.toString());
+
+        } catch (SQLException e) {
+            logger.info("SQLExecption during inserting token into DB");
+            logger.info(e.getMessage());
+        }
+    }
+    public String getTokenForUser(String user){
+        String token=null;
+        try {
+            Connection connection=dataSource.getConnection();
+            String getTokenForUser="SELECT token FROM users WHERE username=?";
+
+            PreparedStatement preparedStatement=connection.prepareStatement(getTokenForUser);
+            preparedStatement.setString(1,user);
+            ResultSet resultSet=preparedStatement.executeQuery();
+
+            token=resultSet.getString("token");
+
+        } catch (SQLException e) {
+            logger.info("SQLExecption during geting token from DB");
+            logger.info(e.getMessage());
+        }
+        return token;
+    }
+
+    public void invalidateTokenInDb(String user){
+        try {
+            Connection connection=dataSource.getConnection();
+
+            String invalidateToken="UPDATE users SET token= NULL WHERE username=?";
+            PreparedStatement preparedStatement=connection.prepareStatement(invalidateToken);
+            preparedStatement.setString(1,user);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            logger.info("SQLExecption during invalidating token in DB");
+            logger.info(e.getMessage());
+        }
+
+    }
 }

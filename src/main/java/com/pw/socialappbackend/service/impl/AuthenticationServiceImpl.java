@@ -25,7 +25,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public boolean isTokenInRequestIsValidForUser(String token, String user) {
-        return false;
+        return token.equals(userDao.getTokenForUser(user));
     }
 
     @Override
@@ -38,9 +38,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User prepareResponse(String username) {
 
         User authenticatedUser = new User();
+        String token=generateToken();
         authenticatedUser.setUsername(username);
-        authenticatedUser.setToken(generateToken());
+        authenticatedUser.setToken(token);
 
+        insertToken(token,username);
         return authenticatedUser;
     }
 
@@ -54,8 +56,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void invalidateToken(String token) {
-
+    public void invalidateToken(String user) {
+        userDao.invalidateTokenInDb(user);
     }
 
     @Override
@@ -67,4 +69,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public boolean checkIfUserExists(User user) {
         return userDao.checkIfUserNameInDb(user.getUsername());
     }
+
+    @Override
+    public void insertToken(String token,String username) {
+        userDao.addTokenToDB(token,username);
+    }
+
 }

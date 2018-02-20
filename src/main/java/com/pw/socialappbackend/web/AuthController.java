@@ -29,6 +29,7 @@ public class AuthController {
 
         boolean isUserAuthenticated = authenticationService.authenticateUser(userToAuthenticate);
 
+
         if(!isUserAuthenticated) {
             return Response.status(Response.Status.UNAUTHORIZED)
                     .build();
@@ -44,7 +45,7 @@ public class AuthController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response logout(@RequestBody User userToLogout) {
 
-        //TODO: call service in order to invalidate user's token
+        authenticationService.invalidateToken(userToLogout.getUsername());
 
         return Response.status(Response.Status.OK)
                 .entity(new User(userToLogout.getUsername()))
