@@ -26,7 +26,7 @@ public class AuthenticationFilter implements Filter {
 
         if(request.getHeader("Token").isEmpty()) {
 
-            if("/auth/login".equals(request.getRequestURI())) {
+            if( (("/auth/register".equals(request.getRequestURI()))) || ("/auth/login".equals(request.getRequestURI())) ) {
                 chain.doFilter(req, res);
             } else {
                 ((HttpServletResponse) res).setStatus(401);
