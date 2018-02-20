@@ -54,12 +54,12 @@
     </appender>
 
     <!-- Send logs to both console and file audit -->
-    <logger name="com.pw.socialappbackend" level="debug" additivity="false">
+    <logger name="com.pw.socialappbackend" level="info" additivity="false">
         <appender-ref ref="FILE-AUDIT" />
         <appender-ref ref="STDOUT" />
     </logger>
 
-    <root level="error">
+    <root level="info">
         <appender-ref ref="FILE-ERROR" />
     </root>
 
