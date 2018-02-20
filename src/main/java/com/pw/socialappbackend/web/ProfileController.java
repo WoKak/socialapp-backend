@@ -38,7 +38,7 @@ public class ProfileController {
     @POST
     @RequestMapping("/tweet")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response logout(@RequestBody Tweet tweet) {
+    public Response add(@RequestBody Tweet tweet) {
 
         tweetService.addTweet(tweet);
 

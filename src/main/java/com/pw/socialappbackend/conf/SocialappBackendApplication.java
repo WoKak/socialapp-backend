@@ -4,7 +4,9 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+import com.pw.socialappbackend.dao.TweetDao;
 import com.pw.socialappbackend.dao.UserDao;
+import com.pw.socialappbackend.model.Tweet;
 import com.pw.socialappbackend.service.AuthenticationService;
 import com.pw.socialappbackend.service.impl.AuthenticationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,7 @@ public class SocialappBackendApplication {
 
 	@Bean
 	public TweetService tweetService() {
-		return new TweetServiceImpl();
+		return new TweetServiceImpl(tweetDao());
 	}
 
 	@Bean
@@ -86,5 +88,10 @@ public class SocialappBackendApplication {
 	@Bean
 	public UserDao userDao(){
 		return new UserDao(dataSource(),passwordEncoder());
+	}
+
+	@Bean
+	public TweetDao tweetDao(){
+		return new TweetDao(dataSource());
 	}
 }
