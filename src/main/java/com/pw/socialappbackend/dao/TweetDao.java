@@ -4,6 +4,7 @@ import com.pw.socialappbackend.model.Tweet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -30,14 +31,15 @@ public class TweetDao {
 
         ArrayList<Tweet> result = new ArrayList<>();
         int userId = findUserId(username);
+        String offensiveSettings = checkSettings(username);
 
         try {
             Connection connection = dataSource.getConnection();
             String getTweets =
-                    "SELECT " +
-                    "users.username, tweets.tweet " +
+                    "SELECT users.username, tweets.tweet " +
                     "FROM tweets INNER JOIN users ON (users.id = tweets.id_ownr) " +
-                    "WHERE id_ownr IN (SELECT followed FROM relationships WHERE follower=?)";
+                    "WHERE id_ownr IN (SELECT followed FROM relationships WHERE follower=?)" +
+                    "AND " + offensiveSettings;
             PreparedStatement preparedStatement = connection.prepareStatement(getTweets);
             preparedStatement.setInt(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -54,17 +56,61 @@ public class TweetDao {
         return result;
     }
 
+    private String checkSettings(String username) {
+
+        String offensiveSettings = "";
+        try {
+            Connection connection = dataSource.getConnection();
+            String getTweets = "SELECT settings FROM users WHERE username=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(getTweets);
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()) {
+                offensiveSettings = resultSet.getInt(1) > 0 ? "tweets.flag < 2" : "tweets.flag < 3";
+            }
+
+        } catch (SQLException ex) {
+            logger.info("SQLExecption during checking users settings");
+            logger.info(ex.getMessage());
+        }
+
+        return offensiveSettings;
+    }
+
     public List<Tweet> fetchUsersTweets(String username) {
 
-        //TODO: reimplement
-        List<Tweet> tweets = fetchTweets(username);
-        return tweets.stream().filter(tweet -> tweet.getOwner().equals(username)).collect(Collectors.toList());
+        List<Tweet> result = new ArrayList<>();
+        int userId = findUserId(username);
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String getTweets =
+                    "SELECT users.username, tweets.tweet " +
+                    "FROM tweets INNER JOIN users ON (users.id = tweets.id_ownr) " +
+                    "WHERE id_ownr=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(getTweets);
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while(resultSet.next()) {
+                result.add(new Tweet(resultSet.getString(2), resultSet.getString(1)));
+            }
+
+        } catch (SQLException ex) {
+            logger.info("SQLExecption during fetching users tweets");
+            logger.info(ex.getMessage());
+        }
+
+        return result;
     }
 
     public int add(Tweet tweetToAdd) {
 
         int ownerId = findUserId(tweetToAdd.getOwner());
         int lastTweetId = 0;
+
+        tweetToAdd.setTweet(HtmlUtils.htmlEscape(tweetToAdd.getTweet()));
 
         try {
             Connection connection = dataSource.getConnection();
