@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
     private AuthenticationService authenticationService;
 
     @Autowired

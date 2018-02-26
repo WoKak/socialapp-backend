@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Piotr on 2018-02-13.
@@ -25,7 +27,7 @@ public class UserDao {
     @Autowired
     public UserDao(DataSource dataSource,PasswordEncoder passwordEncoder) {
         this.dataSource = dataSource;
-        this.passwordEncoder=passwordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public boolean validateUserPassword(User user) {
@@ -66,7 +68,6 @@ public class UserDao {
             preparedStatement.setString(1, user.getUsername());
             preparedStatement.setString(2, hash);
             preparedStatement.executeUpdate();
-            logger.info(preparedStatement.toString());
 
         } catch (SQLException e) {
             logger.info("SQLExecption during inserting user into DB");
@@ -103,7 +104,6 @@ public class UserDao {
             preparedStatement.setString(1,token);
             preparedStatement.setString(2,username);
             preparedStatement.executeUpdate();
-
             logger.info(preparedStatement.toString());
 
         } catch (SQLException e) {
@@ -151,5 +151,127 @@ public class UserDao {
             logger.info(e.getMessage());
         }
 
+    public Integer fetchSettingsFlag(String user) {
+
+        int flag = 0;
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String query = "SELECT settings FROM users WHERE username=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, user);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                flag = resultSet.getInt(1);
+            } else {
+                throw new IllegalStateException("There's no user like: " + user + "!");
+            }
+
+        } catch (SQLException | IllegalStateException ex) {
+            logger.info("SQLExecption during checking users settings in DB");
+            logger.info(ex.getMessage());
+        }
+
+        return flag;
+    }
+
+    public void changeUserSettings(String user) {
+
+        int flag;
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String query = "SELECT settings FROM users WHERE username=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, user);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                flag = resultSet.getInt(1);
+            } else {
+                throw new IllegalStateException("There's no user like: " + user + "!");
+            }
+
+            String changeQuery = "UPDATE users SET settings=? WHERE username=?";
+            PreparedStatement preparedUpdateStatement = connection.prepareStatement(changeQuery);
+            int toUpdate = flag > 0 ? 0 : 1;
+            preparedUpdateStatement.setInt(1, toUpdate);
+            preparedUpdateStatement.setString(2, user);
+            preparedUpdateStatement.executeUpdate();
+
+        } catch (SQLException | IllegalStateException ex) {
+            logger.info("SQLExecption during checking users settings in DB");
+            logger.info(ex.getMessage());
+        }
+
+    }
+
+    public List<String> fetchUsersFriends(String user) {
+
+        int userId = findUserId(user);
+        ArrayList<String> listOfFriends = new ArrayList<>();
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String getUserId =
+                    "SELECT u.username FROM users u " +
+                    "WHERE u.id IN (SELECT followed FROM relationships WHERE follower=?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(getUserId);
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                listOfFriends.add(resultSet.getString(1));
+            }
+
+        } catch (SQLException ex) {
+            logger.info("SQLExecption during fetching list of friends");
+            logger.info(ex.getMessage());
+        }
+
+        return listOfFriends;
+    }
+
+    public void addFriend(String follower, String followed) {
+
+        int followerId = findUserId(follower);
+        int followedId = findUserId(followed);
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String query = "INSERT INTO relationships VALUES (?,?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, followerId);
+            preparedStatement.setInt(2, followedId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException | IllegalStateException ex) {
+            logger.info("SQLExecption during inserting relationship into DB");
+            logger.info(ex.getMessage());
+        }
+    }
+
+    private int findUserId(String username) {
+
+        int userId = 0;
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String getUserId = "SELECT id FROM users WHERE username=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(getUserId);
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()) {
+                userId = resultSet.getInt(1);
+            }
+
+        } catch (SQLException ex) {
+            logger.info("SQLExecption during checking user's id");
+            logger.info(ex.getMessage());
+        }
+
+        return userId;
     }
 }

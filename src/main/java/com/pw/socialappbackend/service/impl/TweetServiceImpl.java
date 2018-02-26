@@ -1,6 +1,7 @@
 package com.pw.socialappbackend.service.impl;
 
 import com.pw.socialappbackend.dao.TweetDao;
+import com.pw.socialappbackend.dao.UserDao;
 import com.pw.socialappbackend.model.Tweet;
 import com.pw.socialappbackend.service.TweetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,8 @@ public class TweetServiceImpl implements TweetService{
     }
 
     @Override
-    public List<Tweet> fetchTweets() {
-        return tweetDao.fetchTweets();
+    public List<Tweet> fetchTweets(String username) {
+        return tweetDao.fetchTweets(username);
     }
 
     @Override
