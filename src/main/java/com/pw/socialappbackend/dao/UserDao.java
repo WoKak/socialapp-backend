@@ -94,6 +94,62 @@ public class UserDao {
 
         return false;
     }
+    public void addTokenToDB(String token,String username){
+        try {
+            Connection connection=dataSource.getConnection();
+
+            String insertTokenToDb = "UPDATE users SET token=? WHERE username=?";
+
+            PreparedStatement preparedStatement=connection.prepareStatement(insertTokenToDb);
+            preparedStatement.setString(1,token);
+            preparedStatement.setString(2,username);
+            preparedStatement.executeUpdate();
+            logger.info(preparedStatement.toString());
+
+        } catch (SQLException e) {
+            logger.info("SQLExecption during inserting token into DB");
+            logger.info(e.getMessage());
+        }
+    }
+    public Boolean getTokenForUser(String token){
+        try {
+            Connection connection=dataSource.getConnection();
+            String getTokenForUser="SELECT * FROM users WHERE token=?";
+
+            PreparedStatement preparedStatement=connection.prepareStatement(getTokenForUser);
+
+            preparedStatement.setString(1,token);
+            logger.info("Query:  "+preparedStatement.toString());
+            ResultSet resultSet=preparedStatement.executeQuery();
+            if(resultSet.next()) {
+                logger.info("Getting token for user");
+                String username = resultSet.getString("username");
+                logger.info("username:   "+username);
+                return true;
+            }
+            else{
+                return false;
+            }
+        } catch (SQLException e) {
+            logger.info("SQLExecption during geting token from DB");
+            logger.info(e.getMessage());
+        }
+        return false;
+    }
+
+    public void invalidateTokenInDb(String user){
+        try {
+            Connection connection=dataSource.getConnection();
+
+            String invalidateToken="UPDATE users SET token= NULL WHERE username=?";
+            PreparedStatement preparedStatement=connection.prepareStatement(invalidateToken);
+            preparedStatement.setString(1,user);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            logger.info("SQLExecption during invalidating token in DB");
+            logger.info(e.getMessage());
+        }
 
     public Integer fetchSettingsFlag(String user) {
 

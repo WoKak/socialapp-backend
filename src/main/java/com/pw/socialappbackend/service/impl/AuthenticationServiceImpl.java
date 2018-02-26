@@ -7,6 +7,8 @@ import com.google.common.hash.Hashing;
 import com.pw.socialappbackend.dao.UserDao;
 import com.pw.socialappbackend.model.User;
 import com.pw.socialappbackend.service.AuthenticationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,7 @@ import java.util.Random;
 //TODO: write implementation
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
-
+    private final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
     private UserDao userDao;
 
     @Autowired
@@ -24,8 +26,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public boolean isTokenInRequestIsValidForUser(String token, String user) {
-        return false;
+    public boolean isTokenInRequestIsValidForUser(String token) {
+        logger.info("checking token for user");
+
+        return userDao.getTokenForUser(token);
+
     }
 
     @Override
@@ -38,9 +43,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User prepareResponse(String username) {
 
         User authenticatedUser = new User();
+        String token=generateToken();
         authenticatedUser.setUsername(username);
-        authenticatedUser.setToken(generateToken());
+        authenticatedUser.setToken(token);
 
+        insertToken(token,username);
         return authenticatedUser;
     }
 
@@ -54,8 +61,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void invalidateToken(String token) {
-
+    public void invalidateToken(String user) {
+        userDao.invalidateTokenInDb(user);
     }
 
     @Override
@@ -67,4 +74,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public boolean checkIfUserExists(User user) {
         return userDao.checkIfUserNameInDb(user.getUsername());
     }
+
+    @Override
+    public void insertToken(String token,String username) {
+        userDao.addTokenToDB(token,username);
+    }
+
 }
