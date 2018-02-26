@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Piotr on 2018-02-13.
@@ -120,7 +122,7 @@ public class UserDao {
 
     public void changeUserSettings(String user) {
 
-        int flag = 0;
+        int flag;
 
         try {
             Connection connection = dataSource.getConnection();
@@ -147,5 +149,73 @@ public class UserDao {
             logger.info(ex.getMessage());
         }
 
+    }
+
+    public List<String> fetchUsersFriends(String user) {
+
+        int userId = findUserId(user);
+        ArrayList<String> listOfFriends = new ArrayList<>();
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String getUserId =
+                    "SELECT u.username FROM users u " +
+                    "WHERE u.id IN (SELECT followed FROM relationships WHERE follower=?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(getUserId);
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                listOfFriends.add(resultSet.getString(1));
+            }
+
+        } catch (SQLException ex) {
+            logger.info("SQLExecption during fetching list of friends");
+            logger.info(ex.getMessage());
+        }
+
+        return listOfFriends;
+    }
+
+    public void addFriend(String follower, String followed) {
+
+        int followerId = findUserId(follower);
+        int followedId = findUserId(followed);
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String query = "INSERT INTO relationships VALUES (?,?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, followerId);
+            preparedStatement.setInt(2, followedId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException | IllegalStateException ex) {
+            logger.info("SQLExecption during inserting relationship into DB");
+            logger.info(ex.getMessage());
+        }
+    }
+
+    private int findUserId(String username) {
+
+        int userId = 0;
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String getUserId = "SELECT id FROM users WHERE username=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(getUserId);
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()) {
+                userId = resultSet.getInt(1);
+            }
+
+        } catch (SQLException ex) {
+            logger.info("SQLExecption during checking user's id");
+            logger.info(ex.getMessage());
+        }
+
+        return userId;
     }
 }

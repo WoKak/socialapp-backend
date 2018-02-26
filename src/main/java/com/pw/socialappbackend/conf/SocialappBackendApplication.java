@@ -8,7 +8,9 @@ import com.pw.socialappbackend.dao.TweetDao;
 import com.pw.socialappbackend.dao.UserDao;
 import com.pw.socialappbackend.model.Tweet;
 import com.pw.socialappbackend.service.AuthenticationService;
+import com.pw.socialappbackend.service.UserService;
 import com.pw.socialappbackend.service.impl.AuthenticationServiceImpl;
+import com.pw.socialappbackend.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.pw.socialappbackend.service.TweetService;
 import com.pw.socialappbackend.service.impl.TweetServiceImpl;
@@ -48,12 +50,17 @@ public class SocialappBackendApplication {
 
 	@Bean
 	public TweetService tweetService() {
-		return new TweetServiceImpl(tweetDao(), userDao());
+		return new TweetServiceImpl(tweetDao());
 	}
 
 	@Bean
 	public AuthenticationService authenticationService() {
 		return new AuthenticationServiceImpl(userDao());
+	}
+
+	@Bean
+	public UserService userService() {
+		return new UserServiceImpl(userDao());
 	}
 
 	@Bean

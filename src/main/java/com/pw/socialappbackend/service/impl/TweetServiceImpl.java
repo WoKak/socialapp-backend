@@ -11,17 +11,15 @@ import java.util.List;
 public class TweetServiceImpl implements TweetService{
 
     private TweetDao tweetDao;
-    private UserDao userDao;
 
     @Autowired
-    public TweetServiceImpl(TweetDao tweetDao, UserDao userDao) {
+    public TweetServiceImpl(TweetDao tweetDao) {
         this.tweetDao = tweetDao;
-        this.userDao = userDao;
     }
 
     @Override
-    public List<Tweet> fetchTweets() {
-        return tweetDao.fetchTweets();
+    public List<Tweet> fetchTweets(String username) {
+        return tweetDao.fetchTweets(username);
     }
 
     @Override
@@ -33,15 +31,5 @@ public class TweetServiceImpl implements TweetService{
     public void addTweet(Tweet tweetToAdd) {
         int index = tweetDao.add(tweetToAdd);
         //TODO: call AI endpoint in order to validate tweet
-    }
-
-    @Override
-    public Integer fetchUsersSettings(String user) {
-        return userDao.fetchSettingsFlag(user);
-    }
-
-    @Override
-    public void changeUsersSettings(String user) {
-        userDao.changeUserSettings(user);
     }
 }

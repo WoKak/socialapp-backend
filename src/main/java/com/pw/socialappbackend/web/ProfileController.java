@@ -1,8 +1,8 @@
 package com.pw.socialappbackend.web;
 
 import com.pw.socialappbackend.model.Tweet;
-import com.pw.socialappbackend.model.User;
 import com.pw.socialappbackend.service.TweetService;
+import com.pw.socialappbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,10 +20,12 @@ import javax.ws.rs.core.Response;
 public class ProfileController {
 
     private TweetService tweetService;
+    private UserService userService;
 
     @Autowired
-    public ProfileController(TweetService tweetService) {
+    public ProfileController(TweetService tweetService, UserService userService) {
         this.tweetService = tweetService;
+        this.userService = userService;
     }
 
     @GET
@@ -40,7 +42,7 @@ public class ProfileController {
     public Response fetchUsersSettings(@PathVariable("user") String user) {
 
         return Response.status(Response.Status.OK)
-                .entity(tweetService.fetchUsersSettings(user))
+                .entity(userService.fetchUsersSettings(user))
                 .build();
     }
 
@@ -48,7 +50,7 @@ public class ProfileController {
     @RequestMapping("/change-users-settings/{user}")
     public Response changeUsersSettings(@PathVariable("user") String user) {
 
-        tweetService.changeUsersSettings(user);
+        userService.changeUsersSettings(user);
 
         return Response.status(Response.Status.OK)
                 .entity(user)
