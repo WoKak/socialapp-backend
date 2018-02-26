@@ -7,6 +7,8 @@ import com.google.common.hash.Hashing;
 import com.pw.socialappbackend.dao.UserDao;
 import com.pw.socialappbackend.model.User;
 import com.pw.socialappbackend.service.AuthenticationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,7 @@ import java.util.Random;
 //TODO: write implementation
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
-
+    private final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
     private UserDao userDao;
 
     @Autowired
@@ -24,8 +26,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public boolean isTokenInRequestIsValidForUser(String token, String user) {
-        return token.equals(userDao.getTokenForUser(user));
+    public boolean isTokenInRequestIsValidForUser(String token) {
+        logger.info("checking token for user");
+
+        return userDao.getTokenForUser(token);
+
     }
 
     @Override

@@ -111,23 +111,30 @@ public class UserDao {
             logger.info(e.getMessage());
         }
     }
-    public String getTokenForUser(String user){
-        String token=null;
+    public Boolean getTokenForUser(String token){
         try {
             Connection connection=dataSource.getConnection();
-            String getTokenForUser="SELECT token FROM users WHERE username=?";
+            String getTokenForUser="SELECT * FROM users WHERE token=?";
 
             PreparedStatement preparedStatement=connection.prepareStatement(getTokenForUser);
-            preparedStatement.setString(1,user);
+
+            preparedStatement.setString(1,token);
+            logger.info("Query:  "+preparedStatement.toString());
             ResultSet resultSet=preparedStatement.executeQuery();
-
-            token=resultSet.getString("token");
-
+            if(resultSet.next()) {
+                logger.info("Getting token for user");
+                String username = resultSet.getString("username");
+                logger.info("username:   "+username);
+                return true;
+            }
+            else{
+                return false;
+            }
         } catch (SQLException e) {
             logger.info("SQLExecption during geting token from DB");
             logger.info(e.getMessage());
         }
-        return token;
+        return false;
     }
 
     public void invalidateTokenInDb(String user){

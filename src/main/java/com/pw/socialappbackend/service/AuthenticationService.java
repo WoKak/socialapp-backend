@@ -4,7 +4,7 @@ import com.pw.socialappbackend.model.User;
 
 public interface AuthenticationService {
 
-    boolean isTokenInRequestIsValidForUser(String token, String user);
+    boolean isTokenInRequestIsValidForUser(String token);
     boolean authenticateUser(User user);
     User prepareResponse(String username);
     String generateToken();

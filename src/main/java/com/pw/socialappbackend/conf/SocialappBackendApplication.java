@@ -42,7 +42,7 @@ public class SocialappBackendApplication {
 
 	@Bean
 	public Filter authFilter() {
-		return new AuthenticationFilter();
+		return new AuthenticationFilter(authenticationService());
 	}
 
 
