@@ -26,14 +26,20 @@ public class TweetDao {
     }
 
 
-    public List<Tweet> fetchTweets() {
+    public List<Tweet> fetchTweets(String username) {
 
         ArrayList<Tweet> result = new ArrayList<>();
+        int userId = findUserId(username);
 
         try {
             Connection connection = dataSource.getConnection();
-            String getTweets = "SELECT users.username, tweets.tweet FROM tweets INNER JOIN users ON (tweets.id_ownr = users.id)";
+            String getTweets =
+                    "SELECT " +
+                    "users.username, tweets.tweet " +
+                    "FROM tweets INNER JOIN users ON (users.id = tweets.id_ownr) " +
+                    "WHERE id_ownr IN (SELECT followed FROM relationships WHERE follower=?)";
             PreparedStatement preparedStatement = connection.prepareStatement(getTweets);
+            preparedStatement.setInt(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()) {
@@ -50,30 +56,15 @@ public class TweetDao {
 
     public List<Tweet> fetchUsersTweets(String username) {
 
-        List<Tweet> tweets = fetchTweets();
+        //TODO: reimplement
+        List<Tweet> tweets = fetchTweets(username);
         return tweets.stream().filter(tweet -> tweet.getOwner().equals(username)).collect(Collectors.toList());
     }
 
     public int add(Tweet tweetToAdd) {
 
-        int ownerId = 0;
+        int ownerId = findUserId(tweetToAdd.getOwner());
         int lastTweetId = 0;
-
-        try {
-            Connection connection = dataSource.getConnection();
-            String getUserIdQuery = "SELECT id FROM users WHERE username=?";
-            PreparedStatement preparedStatement = connection.prepareStatement(getUserIdQuery);
-            preparedStatement.setString(1, tweetToAdd.getOwner());
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if(resultSet.next()) {
-                ownerId = resultSet.getInt("id");
-            }
-
-        } catch (SQLException ex) {
-            logger.info("SQLExecption during checking owner's id");
-            logger.info(ex.getMessage());
-        }
 
         try {
             Connection connection = dataSource.getConnection();
@@ -104,5 +95,28 @@ public class TweetDao {
         }
 
         return lastTweetId;
+    }
+
+    private int findUserId(String owner) {
+
+        int ownerId = 0;
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String getUserIdQuery = "SELECT id FROM users WHERE username=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(getUserIdQuery);
+            preparedStatement.setString(1, owner);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()) {
+                ownerId = resultSet.getInt("id");
+            }
+
+        } catch (SQLException ex) {
+            logger.info("SQLExecption during checking owner's id");
+            logger.info(ex.getMessage());
+        }
+
+        return ownerId;
     }
 }
