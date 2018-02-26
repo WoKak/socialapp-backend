@@ -119,12 +119,12 @@ public class UserDao {
             PreparedStatement preparedStatement=connection.prepareStatement(getTokenForUser);
 
             preparedStatement.setString(1,token);
-            logger.info("Query:  "+preparedStatement.toString());
+            logger.info("Query: " + preparedStatement.toString());
             ResultSet resultSet=preparedStatement.executeQuery();
             if(resultSet.next()) {
                 logger.info("Getting token for user");
                 String username = resultSet.getString("username");
-                logger.info("username:   "+username);
+                logger.info("username: " + username);
                 return true;
             }
             else{
@@ -137,19 +137,20 @@ public class UserDao {
         return false;
     }
 
-    public void invalidateTokenInDb(String user){
+    public void invalidateTokenInDb(String user) {
         try {
-            Connection connection=dataSource.getConnection();
+            Connection connection = dataSource.getConnection();
 
-            String invalidateToken="UPDATE users SET token= NULL WHERE username=?";
-            PreparedStatement preparedStatement=connection.prepareStatement(invalidateToken);
-            preparedStatement.setString(1,user);
+            String invalidateToken = "UPDATE users SET token=NULL WHERE username=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(invalidateToken);
+            preparedStatement.setString(1, user);
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             logger.info("SQLExecption during invalidating token in DB");
             logger.info(e.getMessage());
         }
+    }
 
     public Integer fetchSettingsFlag(String user) {
 
