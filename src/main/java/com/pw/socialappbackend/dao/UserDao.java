@@ -25,7 +25,7 @@ public class UserDao {
     @Autowired
     public UserDao(DataSource dataSource,PasswordEncoder passwordEncoder) {
         this.dataSource = dataSource;
-        this.passwordEncoder=passwordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public boolean validateUserPassword(User user) {
@@ -66,7 +66,6 @@ public class UserDao {
             preparedStatement.setString(1, user.getUsername());
             preparedStatement.setString(2, hash);
             preparedStatement.executeUpdate();
-            logger.info(preparedStatement.toString());
 
         } catch (SQLException e) {
             logger.info("SQLExecption during inserting user into DB");
@@ -94,4 +93,59 @@ public class UserDao {
         return false;
     }
 
+    public Integer fetchSettingsFlag(String user) {
+
+        int flag = 0;
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String query = "SELECT settings FROM users WHERE username=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, user);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                flag = resultSet.getInt(1);
+            } else {
+                throw new IllegalStateException("There's no user like: " + user + "!");
+            }
+
+        } catch (SQLException | IllegalStateException ex) {
+            logger.info("SQLExecption during checking users settings in DB");
+            logger.info(ex.getMessage());
+        }
+
+        return flag;
+    }
+
+    public void changeUserSettings(String user) {
+
+        int flag = 0;
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String query = "SELECT settings FROM users WHERE username=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, user);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                flag = resultSet.getInt(1);
+            } else {
+                throw new IllegalStateException("There's no user like: " + user + "!");
+            }
+
+            String changeQuery = "UPDATE users SET settings=? WHERE username=?";
+            PreparedStatement preparedUpdateStatement = connection.prepareStatement(changeQuery);
+            int toUpdate = flag > 0 ? 0 : 1;
+            preparedUpdateStatement.setInt(1, toUpdate);
+            preparedUpdateStatement.setString(2, user);
+            preparedUpdateStatement.executeUpdate();
+
+        } catch (SQLException | IllegalStateException ex) {
+            logger.info("SQLExecption during checking users settings in DB");
+            logger.info(ex.getMessage());
+        }
+
+    }
 }

@@ -48,7 +48,7 @@ public class SocialappBackendApplication {
 
 	@Bean
 	public TweetService tweetService() {
-		return new TweetServiceImpl(tweetDao());
+		return new TweetServiceImpl(tweetDao(), userDao());
 	}
 
 	@Bean
@@ -87,7 +87,7 @@ public class SocialappBackendApplication {
 
 	@Bean
 	public UserDao userDao(){
-		return new UserDao(dataSource(),passwordEncoder());
+		return new UserDao(dataSource(), passwordEncoder());
 	}
 
 	@Bean

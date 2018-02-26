@@ -35,6 +35,26 @@ public class ProfileController {
                 .build();
     }
 
+    @GET
+    @RequestMapping("/fetch-users-settings/{user}")
+    public Response fetchUsersSettings(@PathVariable("user") String user) {
+
+        return Response.status(Response.Status.OK)
+                .entity(tweetService.fetchUsersSettings(user))
+                .build();
+    }
+
+    @GET
+    @RequestMapping("/change-users-settings/{user}")
+    public Response changeUsersSettings(@PathVariable("user") String user) {
+
+        tweetService.changeUsersSettings(user);
+
+        return Response.status(Response.Status.OK)
+                .entity(user)
+                .build();
+    }
+
     @POST
     @RequestMapping("/tweet")
     @Consumes(MediaType.APPLICATION_JSON)
