@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
-//TODO: write implementation
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
+
     private final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
     private UserDao userDao;
 
