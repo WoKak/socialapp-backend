@@ -44,4 +44,16 @@ public class FriendsController {
                 .entity(follower)
                 .build();
     }
+
+    @GET
+    @RequestMapping("/remove-friend/{follower}/{followed}")
+    public Response removeFriend(@PathVariable("follower") String follower,
+                              @PathVariable("followed") String followed) {
+
+        userService.removeFriend(follower, followed);
+
+        return Response.status(Response.Status.OK)
+                .entity(follower)
+                .build();
+    }
 }

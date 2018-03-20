@@ -34,4 +34,9 @@ public class UserServiceImpl implements UserService {
     public void addFriend(String follower, String followed) {
         userDao.addFriend(follower, followed);
     }
+
+    @Override
+    public void removeFriend(String follower, String followed) {
+        userDao.removeFriend(follower, followed);
+    }
 }

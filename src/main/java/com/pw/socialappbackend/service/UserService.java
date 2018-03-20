@@ -8,4 +8,5 @@ public interface UserService {
     void changeUsersSettings(String user);
     List<String> fetchUsersFriends(String user);
     void addFriend(String follower, String followed);
+    void removeFriend(String follower, String followed);
 }

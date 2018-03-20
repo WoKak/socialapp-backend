@@ -275,4 +275,23 @@ public class UserDao {
 
         return userId;
     }
+
+    public void removeFriend(String follower, String followed) {
+
+        int followerId = findUserId(follower);
+        int followedId = findUserId(followed);
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String query = "DELETE FROM relationships WHERE follower = ? AND followed = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, followerId);
+            preparedStatement.setInt(2, followedId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException | IllegalStateException ex) {
+            logger.info("SQLExecption during inserting relationship into DB");
+            logger.info(ex.getMessage());
+        }
+    }
 }

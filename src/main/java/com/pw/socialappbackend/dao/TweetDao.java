@@ -35,10 +35,10 @@ public class TweetDao {
         try {
             Connection connection = dataSource.getConnection();
             String getTweets =
-                    "SELECT users.username, tweets.tweet " +
+                    "SELECT users.username, tweets.tweet, tweets.id_twt " +
                     "FROM tweets INNER JOIN users ON (users.id = tweets.id_ownr) " +
                     "WHERE id_ownr IN (SELECT followed FROM relationships WHERE follower=?)" +
-                    "AND " + offensiveSettings;
+                    "AND " + offensiveSettings + " ORDER BY id_twt DESC";
             PreparedStatement preparedStatement = connection.prepareStatement(getTweets);
             preparedStatement.setInt(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -85,9 +85,9 @@ public class TweetDao {
         try {
             Connection connection = dataSource.getConnection();
             String getTweets =
-                    "SELECT users.username, tweets.tweet " +
+                    "SELECT users.username, tweets.tweet, tweets.id_twt " +
                     "FROM tweets INNER JOIN users ON (users.id = tweets.id_ownr) " +
-                    "WHERE id_ownr=?";
+                    "WHERE id_ownr=? ORDER BY id_twt DESC";
             PreparedStatement preparedStatement = connection.prepareStatement(getTweets);
             preparedStatement.setInt(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
