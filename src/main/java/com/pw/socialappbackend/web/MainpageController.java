@@ -28,4 +28,15 @@ public class MainpageController {
                 .entity(tweetService.fetchTweets(user))
                 .build();
     }
+
+    @GET
+    @RequestMapping("/flag-tweet/{id}")
+    public Response fetchTweets(@PathVariable("id") int offensiveTweetId) {
+
+        tweetService.flagTweet(offensiveTweetId);
+
+        return Response.status(Response.Status.OK)
+                .entity(offensiveTweetId)
+                .build();
+    }
 }

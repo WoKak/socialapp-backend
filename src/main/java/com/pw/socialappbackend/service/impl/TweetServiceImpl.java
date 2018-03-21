@@ -57,4 +57,11 @@ public class TweetServiceImpl implements TweetService {
             logger.info("Problem during sending tweet for validation");
         }
     }
+
+    @Override
+    public void flagTweet(int offensiveTweetId) {
+        tweetDao.flagTweet(offensiveTweetId);
+    }
+
+
 }

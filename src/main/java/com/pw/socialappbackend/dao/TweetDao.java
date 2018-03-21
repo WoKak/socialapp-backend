@@ -44,7 +44,13 @@ public class TweetDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()) {
-                result.add(new Tweet(resultSet.getString(2), resultSet.getString(1)));
+                result.add(
+                        new Tweet(
+                                resultSet.getString(2),
+                                resultSet.getString(1),
+                                resultSet.getInt(3)
+                        )
+                );
             }
 
         } catch (SQLException ex) {
@@ -93,7 +99,13 @@ public class TweetDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()) {
-                result.add(new Tweet(resultSet.getString(2), resultSet.getString(1)));
+                result.add(
+                        new Tweet(
+                                resultSet.getString(2),
+                                resultSet.getString(1),
+                                resultSet.getInt(3)
+                        )
+                );
             }
 
         } catch (SQLException ex) {
@@ -163,5 +175,20 @@ public class TweetDao {
         }
 
         return ownerId;
+    }
+
+    public void flagTweet(int offensiveTweetId) {
+
+        try {
+            Connection connection = dataSource.getConnection();
+            String getUserIdQuery = "UPDATE tweets SET flag = 2 WHERE id_twt=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(getUserIdQuery);
+            preparedStatement.setInt(1, offensiveTweetId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException ex) {
+            logger.info("SQLExecption during checking owner's id");
+            logger.info(ex.getMessage());
+        }
     }
 }
