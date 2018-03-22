@@ -6,7 +6,6 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.pw.socialappbackend.dao.TweetDao;
 import com.pw.socialappbackend.dao.UserDao;
-import com.pw.socialappbackend.model.Tweet;
 import com.pw.socialappbackend.service.AuthenticationService;
 import com.pw.socialappbackend.service.UserService;
 import com.pw.socialappbackend.service.impl.AuthenticationServiceImpl;
@@ -20,7 +19,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.servlet.Filter;

@@ -119,17 +119,8 @@ public class UserDao {
             PreparedStatement preparedStatement=connection.prepareStatement(getTokenForUser);
 
             preparedStatement.setString(1,token);
-            logger.info("Query: " + preparedStatement.toString());
             ResultSet resultSet=preparedStatement.executeQuery();
-            if(resultSet.next()) {
-                logger.info("Getting token for user");
-                String username = resultSet.getString("username");
-                logger.info("username: " + username);
-                return true;
-            }
-            else{
-                return false;
-            }
+            return resultSet.next();
         } catch (SQLException e) {
             logger.info("SQLExecption during geting token from DB");
             logger.info(e.getMessage());

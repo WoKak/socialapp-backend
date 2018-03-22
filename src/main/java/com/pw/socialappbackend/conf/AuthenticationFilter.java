@@ -9,9 +9,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
 
 public class AuthenticationFilter implements Filter {
 
@@ -37,7 +34,6 @@ public class AuthenticationFilter implements Filter {
 
             if( (("/auth/register".equals(request.getRequestURI()))) || ("/auth/login".equals(request.getRequestURI())) ) {
                 chain.doFilter(req, res);
-                logger.info("Jestem w /auth.register lub /auth/login");
             } else {
                 ((HttpServletResponse) res).setStatus(401);
             }
