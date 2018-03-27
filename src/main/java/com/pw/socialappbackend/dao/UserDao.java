@@ -25,7 +25,7 @@ public class UserDao {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserDao(DataSource dataSource,PasswordEncoder passwordEncoder) {
+    public UserDao(DataSource dataSource, PasswordEncoder passwordEncoder) {
         this.dataSource = dataSource;
         this.passwordEncoder = passwordEncoder;
     }
@@ -94,33 +94,35 @@ public class UserDao {
 
         return false;
     }
-    public void addTokenToDB(String token,String username){
+
+    public void addTokenToDB(String token, String username) {
         try {
-            Connection connection=dataSource.getConnection();
+            Connection connection = dataSource.getConnection();
 
             String insertTokenToDb = "UPDATE users SET token=? WHERE username=?";
 
-            PreparedStatement preparedStatement=connection.prepareStatement(insertTokenToDb);
-            preparedStatement.setString(1,token);
-            preparedStatement.setString(2,username);
+            PreparedStatement preparedStatement = connection.prepareStatement(insertTokenToDb);
+            preparedStatement.setString(1, token);
+            preparedStatement.setString(2, username);
             preparedStatement.executeUpdate();
-            logger.info(preparedStatement.toString());
 
         } catch (SQLException e) {
             logger.info("SQLExecption during inserting token into DB");
             logger.info(e.getMessage());
         }
     }
-    public Boolean getTokenForUser(String token){
+
+    public Boolean getTokenForUser(String token) {
         try {
-            Connection connection=dataSource.getConnection();
-            String getTokenForUser="SELECT * FROM users WHERE token=?";
+            Connection connection = dataSource.getConnection();
+            String getTokenForUser = "SELECT * FROM users WHERE token=?";
 
-            PreparedStatement preparedStatement=connection.prepareStatement(getTokenForUser);
+            PreparedStatement preparedStatement = connection.prepareStatement(getTokenForUser);
 
-            preparedStatement.setString(1,token);
-            ResultSet resultSet=preparedStatement.executeQuery();
+            preparedStatement.setString(1, token);
+            ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.next();
+
         } catch (SQLException e) {
             logger.info("SQLExecption during geting token from DB");
             logger.info(e.getMessage());
@@ -208,7 +210,7 @@ public class UserDao {
             Connection connection = dataSource.getConnection();
             String getUserId =
                     "SELECT u.username FROM users u " +
-                    "WHERE u.id IN (SELECT followed FROM relationships WHERE follower=?)";
+                            "WHERE u.id IN (SELECT followed FROM relationships WHERE follower=?)";
             PreparedStatement preparedStatement = connection.prepareStatement(getUserId);
             preparedStatement.setInt(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -255,7 +257,7 @@ public class UserDao {
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 userId = resultSet.getInt(1);
             }
 

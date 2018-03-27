@@ -21,13 +21,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private UserDao userDao;
 
     @Autowired
-    public AuthenticationServiceImpl (UserDao userDao){
+    public AuthenticationServiceImpl(UserDao userDao) {
         this.userDao = userDao;
     }
 
     @Override
     public boolean isTokenInRequestIsValidForUser(String token) {
-        logger.info("checking token for user");
 
         return userDao.getTokenForUser(token);
 
@@ -43,11 +42,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User prepareResponse(String username) {
 
         User authenticatedUser = new User();
-        String token=generateToken();
+        String token = generateToken();
         authenticatedUser.setUsername(username);
         authenticatedUser.setToken(token);
 
-        insertToken(token,username);
+        insertToken(token, username);
         return authenticatedUser;
     }
 
@@ -76,8 +75,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void insertToken(String token,String username) {
-        userDao.addTokenToDB(token,username);
+    public void insertToken(String token, String username) {
+        userDao.addTokenToDB(token, username);
     }
 
 }
