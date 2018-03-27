@@ -35,6 +35,8 @@ public class SocialappBackendApplication {
 		SpringApplication.run(SocialappBackendApplication.class, args);
 	}
 
+	// Filters
+
 	@Bean
 	public Filter corsFilter() {
 		return new CustomCorsFilter();
@@ -45,6 +47,7 @@ public class SocialappBackendApplication {
 		return new AuthenticationFilter(authenticationService());
 	}
 
+	// Services
 
 	@Bean
 	public TweetService tweetService() {
@@ -61,17 +64,19 @@ public class SocialappBackendApplication {
 		return new UserServiceImpl(userDao());
 	}
 
+	// Dao's
+
 	@Bean
-	public DataSource dataSource() {
-
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName(env.getRequiredProperty("jdbc.drivers"));
-		dataSource.setUrl(env.getRequiredProperty("jdbc.url"));
-		dataSource.setUsername(env.getRequiredProperty("jdbc.username"));
-		dataSource.setPassword(env.getRequiredProperty("jdbc.password"));
-
-		return dataSource;
+	public UserDao userDao(){
+		return new UserDao(dataSource(), passwordEncoder());
 	}
+
+	@Bean
+	public TweetDao tweetDao(){
+		return new TweetDao(dataSource());
+	}
+
+	// Password encoder
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -90,13 +95,16 @@ public class SocialappBackendApplication {
 		};
 	}
 
-	@Bean
-	public UserDao userDao(){
-		return new UserDao(dataSource(), passwordEncoder());
-	}
+	// Data source
 
 	@Bean
-	public TweetDao tweetDao(){
-		return new TweetDao(dataSource());
+	public DataSource dataSource() {
+
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName(env.getRequiredProperty("jdbc.drivers"));
+		dataSource.setUrl(env.getRequiredProperty("jdbc.url"));
+		dataSource.setUsername(env.getRequiredProperty("jdbc.username"));
+		dataSource.setPassword(env.getRequiredProperty("jdbc.password"));
+		return dataSource;
 	}
 }
