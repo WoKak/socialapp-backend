@@ -29,7 +29,6 @@ public class AuthenticationFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
-        String tmp = request.getRequestURI();
         if(request.getHeader("Token").isEmpty()) {
 
             if( (("/auth/register".equals(request.getRequestURI()))) || ("/auth/login".equals(request.getRequestURI())) ) {
@@ -38,7 +37,6 @@ public class AuthenticationFilter implements Filter {
                 ((HttpServletResponse) res).setStatus(401);
             }
         } else {
-            //TODO: here should be some logic which checks this token - and token needs to be connected with user on db level
             if(authenticationService.isTokenInRequestIsValidForUser(request.getHeader("Token"))){
                 chain.doFilter(req, res);
 
