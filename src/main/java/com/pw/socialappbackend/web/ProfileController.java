@@ -62,10 +62,8 @@ public class ProfileController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response add(@RequestBody Tweet tweet) {
 
-        tweetService.addTweet(tweet);
-
         return Response.status(Response.Status.OK)
-                .entity(tweet)
+                .entity(tweetService.addTweet(tweet))
                 .build();
     }
 }
